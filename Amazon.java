@@ -1,3 +1,4 @@
+package Amazon;
 import java.util.Scanner;
 import java.util.ArrayList;
 class Amazon{
@@ -73,21 +74,23 @@ class Amazon{
         }
     }
     static void merchantView(){
-        for(int i=0;i<merchant.size();i++){
-            if(merchant.isEmpty()){
-                System.out.println("No Merchants added");
-            }else{
+        if(merchant.isEmpty()){
+            System.out.println("No Merchants added !!");
+        }
+        else{
+            for(int i=0;i<merchant.size();i++){
             System.out.println(i+1 +" "+merchant.get(i).name+"  "+merchant.get(i).mid+"  "+merchant.get(i).verifystatus);
             }
         }
     }
     static void productView(){
-        for(int i=0;i<product.size();i++){
-            if(product.isEmpty()){
-                System.out.println("No Products added");
+        if(product.isEmpty()){
+            System.out.println("No Products added!!");
+        }
+        else{
+            for(int i=0;i<product.size();i++){
+                System.out.println(i+1 +" "+product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).desc+"  "+product.get(i).price+"  "+product.get(i).delivery);
             }
-            else
-            System.out.println(i+1 +" "+product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).desc+"  "+product.get(i).price+"  "+product.get(i).delivery);
         }
     }
     static void addMerchant(){
