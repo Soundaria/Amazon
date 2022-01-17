@@ -90,7 +90,7 @@ class Amazon{
         }
         else{
             for(int i=0;i<product.size();i++){
-                System.out.println(i+1 +" "+product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).mid+" "+product.get(i).desc+"  "+product.get(i).price+"  "+product.get(i).delivery+" "+product.get(i).count);
+                System.out.println(i+1 +" "+product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).mid+" "+product.get(i).desc+"  "+product.get(i).price+"   Delivery in "+product.get(i).delivery+"  Product Count : "+product.get(i).count);
             }
         }
     }
@@ -381,7 +381,7 @@ class Amazon{
         for(int i=0;i<product.size();i++){
             if(id.equals(product.get(i).mid)){
                 c=1;
-                System.out.println(i+1 +"  "+product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).mid+"  "+product.get(i).desc+"  "+product.get(i).delivery+"  "+product.get(i).price+" "+product.get(i).count);
+                System.out.println(i+1 +"  "+product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).mid+"  "+product.get(i).desc+"  Delivery in "+product.get(i).delivery+"  "+product.get(i).price+"  Product count : "+product.get(i).count);
             }
         }
         if(c==0){
@@ -478,7 +478,7 @@ class Amazon{
         for(int i=0;i<user.size();i++){
             if(name.equals(user.get(i).name) && pass.equals(user.get(i).pass)){
                 while(r){
-                    System.out.printf("1.Search Product%n2.View Cart%n3.Remove Account%n4.Exit%n");
+                    System.out.printf("1.Search Product%n2.View Cart%n3.Remove Account%n4.View Orders%n5.Exit%n");
                     int a=sc.nextInt();
                     switch(a){
                         case 1:
@@ -488,9 +488,12 @@ class Amazon{
                             viewCart(user.get(i).name,i);
                             break;
                         case 3:
-                            removeAcoount(user.get(i).name);
+                            removeAccount(user.get(i).name);
                             break;
                         case 4:
+                            viewOrder(i);
+                            break;
+                        case 5:
                             exit();
                             r=false;
                             break;
@@ -514,7 +517,7 @@ class Amazon{
         int c=0,p=1;
         for(int i=0;i<product.size();i++){
             if(name.equalsIgnoreCase(product.get(i).name)){
-                System.out.println(p+". "+product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).price+"   Delivery in "+product.get(i).delivery+"  Stock- "+product.get(i).count);
+                System.out.println(p+". "+product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).price+"   Delivery in "+product.get(i).delivery+"  Stock - "+product.get(i).count);
                 p++;
             }
             else{
@@ -524,34 +527,40 @@ class Amazon{
             System.out.println("No related products!! Surf for more..");
             }
             else{
-                System.out.print("Do you want to buy product ? : ");
-                String pro=sc.next();
-                if(pro.equalsIgnoreCase("yes")){
-                    System.out.print("Enter the product name: ");
-                    String productName=sc.next();
-                    System.out.print("Enter the product id : ");
-                    String productId=sc.next();
-                    int d=0;
-                    for(int j=0;j<product.size();j++){
-                        if(productName.equals(product.get(j).name) && productId.equals(product.get(j).pid)){
-                            System.out.print("Add to cart?[yes/no] : ");
-                            String buy=sc.next();
-                            if(buy.equalsIgnoreCase("yes"))
-                            cart.add(new Cart(productName,productId,product.get(j).delivery,product.get(j).price,uname));
-                            else
-                            System.out.println("Surf for more..");
+                if(product.get(i).count>0){
+                    System.out.print("Do you want to buy product ? : ");
+                    String pro=sc.next();
+                    if(pro.equalsIgnoreCase("yes")){
+                        System.out.print("Enter the product name: ");
+                        String productName=sc.next();
+                        System.out.print("Enter the product id : ");
+                        String productId=sc.next();
+                        int d=0;
+                        for(int j=0;j<product.size();j++){
+                            if(productName.equals(product.get(j).name) && productId.equals(product.get(j).pid)){
+                                System.out.print("Add to cart?[yes/no] : ");
+                                String buy=sc.next();
+                                if(buy.equalsIgnoreCase("yes"))
+                                cart.add(new Cart(productName,productId,product.get(j).delivery,product.get(j).price,uname));
+                                else
+                                System.out.println("Surf for more..");
+                            }
+                            else{
+                                d=d+1;
+                            }
+                            if(d==product.size()){
+                                System.out.println("Enter a valid product name!!");
+                            }
                         }
-                        else{
-                            d=d+1;
-                        }
-                        if(d==product.size()){
-                            System.out.println("Enter a valid product name!!");
-                        }
+                    }
+                    else{
+                        System.out.println("Surf for more..");
                     }
                 }
                 else{
-                    System.out.println("Surf for more..");
+                    System.out.println("This product is Out of stock");
                 }
+                
             }
         }
        
@@ -577,7 +586,7 @@ class Amazon{
                     if(user.get(id).cash>=product.get(i).price){
                         user.get(id).cash-=product.get(i).price;
                         sold.add(new SoldHistory(pname, pid,product.get(i).price,product.get(i).mid,user.get(id).name));
-                        userorder.add(new UserOrder(pname,pid,product.get(i).price,product.get(i).desc,user.get(id).name));
+                        userorder.add(new UserOrder(pname,pid,product.get(i).price,product.get(i).desc,user.get(id).name,id));
                         System.out.println("Amount debited!!");
                         System.out.println("Order placed sucessfully");
                         System.out.println("Your order will be delivered in : "+product.get(i).delivery);
@@ -602,7 +611,7 @@ class Amazon{
         }
 
     }
-    static void removeAcoount(String uname){
+    static void removeAccount(String uname){
         System.out.printf("Hi.."+uname+" %nEnter your password : ");
         String pass=sc.next();
         int c=0;
@@ -617,6 +626,13 @@ class Amazon{
             }
             if(c==user.size()){
                 System.out.println("Invalid password..");
+            }
+        }
+    }
+    static void viewOrder(int id){
+        for(int i=0;i<userorder.size();i++){
+            if(id==userorder.get(i).userid){
+                System.out.println(userorder.get(i).name+" "+userorder.get(i).pid+" "+userorder.get(i).price+"  User id - "+userorder.get(i).userid);
             }
         }
     }
@@ -655,6 +671,7 @@ class Product{
         this.mid=mid;
         this.desc=desc;
         this.delivery=delivery;
+        this.count=count;
     }
 }
 class User{
@@ -668,13 +685,14 @@ class User{
 }
 class UserOrder{
     String name,desc,pid,username;
-    int price;
-    UserOrder(String name,String pid,int price,String desc,String username){
+    int price,userid;
+    UserOrder(String name,String pid,int price,String desc,String username,int userid){
         this.name=name;
         this.price=price;
         this.desc=desc;
         this.pid=pid;
         this.username=username;
+        this.userid=userid;
     }
 }
 class Cart{
