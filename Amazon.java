@@ -7,6 +7,7 @@ class Amazon{
     static ArrayList<Merchant> merchant=new ArrayList<>();
     static ArrayList<Product> product=new ArrayList<>();
     static ArrayList<User> user=new ArrayList<>();
+    static ArrayList<UserOrder> userorder=new ArrayList<>();
     static ArrayList<Cart> cart=new ArrayList<>();
     static ArrayList<SoldHistory> sold=new ArrayList<>();
     public static void main(String[] args) {
@@ -89,7 +90,7 @@ class Amazon{
         }
         else{
             for(int i=0;i<product.size();i++){
-                System.out.println(i+1 +" "+product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).desc+"  "+product.get(i).price+"  "+product.get(i).delivery);
+                System.out.println(i+1 +" "+product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).mid+" "+product.get(i).desc+"  "+product.get(i).price+"  "+product.get(i).delivery+" "+product.get(i).count);
             }
         }
     }
@@ -252,9 +253,11 @@ class Amazon{
             int price=sc.nextInt();
             System.out.print("Description : ");
             String desc=sc.next();
+            System.out.print("Count : ");
+            int count=sc.nextInt();
             String pid="P0"+pcount;
             String delivery="5 days";
-            product.add(new Product(name,pid,mid,desc,delivery,price));
+            product.add(new Product(name,pid,mid,desc,delivery,price,count));
             System.out.println("Product added sucessfully");
             System.out.println("Your product id : "+pid);
             pcount++;
@@ -275,8 +278,8 @@ class Amazon{
         String name=sc.next();
         for(int i=0;i<product.size();i++){
             if(name.equals(product.get(i).name)){
-                System.out.println(product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).mid+"  "+product.get(i).desc+"  "+product.get(i).delivery);
-                System.out.printf("What you want to modify(1.name/2.price/3.desc/4.delivery..)%nEnter the required num : ");
+                System.out.println(product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).mid+"  "+product.get(i).desc+"  "+product.get(i).delivery+" "+product.get(i).count);
+                System.out.printf("What you want to modify(1.name/2.price/3.desc/4.delivery/5.count..)%nEnter the required num : ");
                 int update=sc.nextInt();
                 System.out.print("Enter the details to update : ");
                 String details=sc.next();
@@ -304,6 +307,12 @@ class Amazon{
                     System.out.println("Delivery details updated successfully!!");
                     System.out.println("Updated delivery details : "+product.get(i).delivery);
                 }
+                else if(update==5){
+                    System.out.println("Current delivery details : "+product.get(i).count);
+                    product.get(i).count=Integer.parseInt(details);
+                    System.out.println("Count details updated successfully!!");
+                    System.out.println("Updated count details : "+product.get(i).count);
+                }
                 else{
                     System.out.println("Enter a valid input");
                 }
@@ -319,7 +328,7 @@ class Amazon{
         System.out.println("List of your products : ");
         for(int i=0;i<product.size();i++){
             if(id.equals(product.get(i).mid))
-            System.out.println(product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).mid+"  "+product.get(i).desc+"  "+product.get(i).delivery);
+            System.out.println(product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).mid+"  "+product.get(i).desc+"  "+product.get(i).delivery+" "+product.get(i).count);
         }
         System.out.print("Enter the product id : ");
         String pid=sc.next();
@@ -372,7 +381,7 @@ class Amazon{
         for(int i=0;i<product.size();i++){
             if(id.equals(product.get(i).mid)){
                 c=1;
-                System.out.println(i+1 +"  "+product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).mid+"  "+product.get(i).desc+"  "+product.get(i).delivery+"  "+product.get(i).price);
+                System.out.println(i+1 +"  "+product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).mid+"  "+product.get(i).desc+"  "+product.get(i).delivery+"  "+product.get(i).price+" "+product.get(i).count);
             }
         }
         if(c==0){
@@ -505,7 +514,7 @@ class Amazon{
         int c=0,p=1;
         for(int i=0;i<product.size();i++){
             if(name.equalsIgnoreCase(product.get(i).name)){
-                System.out.println(p+". "+product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).price+"  "+product.get(i).delivery);
+                System.out.println(p+". "+product.get(i).name+"  "+product.get(i).pid+"  "+product.get(i).price+"   Delivery in "+product.get(i).delivery+"  Stock- "+product.get(i).count);
                 p++;
             }
             else{
@@ -568,11 +577,12 @@ class Amazon{
                     if(user.get(id).cash>=product.get(i).price){
                         user.get(id).cash-=product.get(i).price;
                         sold.add(new SoldHistory(pname, pid,product.get(i).price,product.get(i).mid,user.get(id).name));
+                        userorder.add(new UserOrder(pname,pid,product.get(i).price,product.get(i).desc,user.get(id).name));
                         System.out.println("Amount debited!!");
                         System.out.println("Order placed sucessfully");
                         System.out.println("Your order will be delivered in : "+product.get(i).delivery);
                         System.out.println("Happy Shopping...Vist Again..");
-                        product.remove(i);
+                        product.get(i).count--;
                     }
                     else{
                         System.out.println("You have low amount");
@@ -637,8 +647,8 @@ class SoldHistory{
 }
 class Product{
     String name,pid,mid,desc,delivery;
-    int price;
-    Product(String name,String pid,String mid,String desc,String delivery,int price){
+    int price,count;
+    Product(String name,String pid,String mid,String desc,String delivery,int price,int count){
         this.name=name;
         this.pid=pid;
         this.price=price;
@@ -654,6 +664,17 @@ class User{
         this.name=name;
         this.pass=pass;
         this.cash=cash;
+    }
+}
+class UserOrder{
+    String name,desc,pid,username;
+    int price;
+    UserOrder(String name,String pid,int price,String desc,String username){
+        this.name=name;
+        this.price=price;
+        this.desc=desc;
+        this.pid=pid;
+        this.username=username;
     }
 }
 class Cart{
