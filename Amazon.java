@@ -675,7 +675,7 @@ class Product{
     }
 }
 class User{
-    String name,pass,id;
+    String name,pass;
     int cash;
     User(String name,String pass,int cash){
         this.name=name;
